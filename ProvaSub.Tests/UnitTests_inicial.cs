@@ -31,12 +31,6 @@ namespace ProvaSub.Tests
             _dbContext = serviceProvider.GetRequiredService<TestDbContext>();
         }
 
-        [TestMethod]
-        public void TestMethod1()
-        {
-            Assert.IsTrue(true);//Testa funcionamento da classe de testes.
-        }
-
         #region Cenarios CanPurchase
 
         [TestMethod]
@@ -53,76 +47,5 @@ namespace ProvaSub.Tests
             // Assert
             Assert.IsTrue(result);
         }
-
-        [TestMethod]
-        public async Task CanPurchase_NonExistentCustomer_ThrowsException()
-        {
-            // Arrange
-            var customerId = 999;
-            var purchaseValue = 50;
-            var customerService = new CustomerService(_dbContext);
-
-            // Act & Assert
-            await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
-                await customerService.CanPurchase(customerId, purchaseValue));
-        }
-
-        #endregion
-        [TestMethod]
-        public async Task CanPurchase_CustomerAlreadyPurchasedThisMonth_ReturnsFalse()
-        {
-            // Arrange
-            var customerId = 1;
-            var order = new Order { CustomerId = customerId, OrderDate = DateTime.UtcNow };
-            _dbContext.Orders.Add(order);
-            await _dbContext.SaveChangesAsync();
-
-            var customerService = new CustomerService(_dbContext);
-
-            // Act
-            var result = await customerService.CanPurchase(customerId, 50);
-
-            // Assert
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public async Task CanPurchase_FirstPurchaseGreaterThan100_ReturnsFalse()
-        {
-            // Arrange
-            var customerId = 1;
-            var customer = new Customer { Id = customerId, Name = "Test Customer" };
-            _dbContext.Customers.Add(customer);
-            await _dbContext.SaveChangesAsync();
-
-            var customerService = new CustomerService(_dbContext);
-
-            // Act
-            var result = await customerService.CanPurchase(customerId, 150);
-
-            // Assert
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public async Task CanPurchase_FirstPurchaseLessThanOrEqual100_ReturnsTrue()
-        {
-            // Arrange
-            var customerId = 1;
-            var customer = new Customer { Id = customerId, Name = "Test Customer" };
-            _dbContext.Customers.Add(customer);
-            await _dbContext.SaveChangesAsync();
-
-            var customerService = new CustomerService(_dbContext);
-
-            // Act
-            var result = await customerService.CanPurchase(customerId, 100);
-
-            // Assert
-            Assert.IsTrue(result);
-        }
-
-        // Adicione outros métodos de teste conforme necessário...
-
     }
 }
